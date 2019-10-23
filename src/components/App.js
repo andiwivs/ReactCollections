@@ -1,12 +1,14 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
 import PersonService from "../application/PersonService";
+import ConditionalView from "./ConditionalView";
+import PagingHeader from "./Paging/PagingHeader";
+import PagingFooter from "./Paging/PagingFooter";
 import "./App.css";
 
 const App = () => {
   const people = PersonService.GetAllPeople();
 
-  let hasPeople = people && people.length;
+  let hasPeople = Boolean(people && people.length);
 
   return (
     <div>
@@ -23,18 +25,6 @@ const App = () => {
   );
 };
 
-const ConditionalView = props => {
-  return (
-    <div style={{ display: props.isVisible ? "inherit" : "none" }}>
-      {props.isVisible ? props.children : null}
-    </div>
-  );
-};
-
-ConditionalView.propTypes = {
-  isVisible: PropTypes.bool.isRequired
-};
-
 const PeopleEmpty = () => {
   return (
     <div>
@@ -43,12 +33,36 @@ const PeopleEmpty = () => {
   );
 };
 
-const PeopleView = props => {
+const PeopleView = ({ people }) => {
+  const [pageSize, setPageSize] = useState(10);
+  const [pageIndex, setPageIndex] = useState(1);
+
+  const pageSizeChangedHandler = newPageSize => {
+    setPageSize(newPageSize);
+    setPageIndex(1);
+  };
+
+  const pageIndexChangedHandler = pageIndex => {
+    setPageIndex(pageIndex);
+  };
+
   return (
     <div>
-      {props.people.map(person => (
+      <PagingHeader
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        totalCount={people.length}
+        onPageSizeChanged={pageSizeChangedHandler}
+      />
+      {people.map(person => (
         <PersonView key={person.id} {...person} />
       ))}
+      <PagingFooter
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        totalCount={people.length}
+        onPageIndexChanged={pageIndexChangedHandler}
+      />
     </div>
   );
 };
