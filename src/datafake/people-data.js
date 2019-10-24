@@ -20,7 +20,17 @@ const peopleData = {
     { id: 18, name: "Fake 18" },
     { id: 19, name: "Fake 19" },
     { id: 20, name: "Fake 20" },
-    { id: 21, name: "Fake 21" }
+    { id: 21, name: "Fake 21" },
+    { id: 22, name: "Fake 22" },
+    { id: 23, name: "Fake 23" },
+    { id: 24, name: "Fake 24" },
+    { id: 25, name: "Fake 25" },
+    { id: 26, name: "Fake 26" },
+    { id: 27, name: "Fake 27" },
+    { id: 28, name: "Fake 28" },
+    { id: 29, name: "Fake 29" },
+    { id: 30, name: "Fake 30" },
+    { id: 31, name: "Fake 31" }
   ]
 };
 
