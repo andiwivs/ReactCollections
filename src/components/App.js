@@ -1,12 +1,56 @@
 import React, { useState } from "react";
 import PersonService from "../application/PersonService";
 import ConditionalView from "./ConditionalView";
-import PagingHeader from "./Paging/PagingHeader";
-import PagingFooter from "./Paging/PagingFooter";
+import PeopleEmpty from "./People/PeopleEmpty";
+import PeopleView from "./People/PeopleView";
 import "./App.css";
 
+const usePeopleState = () => {
+  const [pageSize, setPageSize] = useState(10);
+  const [pageIndex, setPageIndex] = useState(1);
+  let people = [];
+
+  const pageSizeChangedHandler = newPageSize => {
+    setPageSize(newPageSize);
+    setPageIndex(1);
+    refreshPeoplePage();
+  };
+
+  const pageIndexChangedHandler = pageIndex => {
+    setPageIndex(pageIndex);
+    refreshPeoplePage();
+  };
+
+  //////////////// START OF FAKE API CALL /////////////////
+  const allPeople = PersonService.GetAllPeople();
+  const totalCount = allPeople.length;
+  ///////////////// END OF FAKE API CALL //////////////////
+
+  const refreshPeoplePage = () => {
+    people = allPeople.slice(pageSize * (pageIndex - 1), pageSize * pageIndex);
+  };
+
+  refreshPeoplePage();
+
+  return {
+    people,
+    totalCount,
+    pageSize,
+    pageIndex,
+    pageSizeChangedHandler,
+    pageIndexChangedHandler
+  };
+};
+
 const App = () => {
-  const people = PersonService.GetAllPeople();
+  const {
+    people,
+    totalCount,
+    pageSize,
+    pageIndex,
+    pageSizeChangedHandler,
+    pageIndexChangedHandler
+  } = usePeopleState();
 
   let hasPeople = Boolean(people && people.length);
 
@@ -19,56 +63,17 @@ const App = () => {
       </ConditionalView>
 
       <ConditionalView isVisible={hasPeople}>
-        <PeopleView people={people} />
+        <PeopleView
+          people={people}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          pageIndex={pageIndex}
+          onPageSizeChanged={pageSizeChangedHandler}
+          onPageIndexChanged={pageIndexChangedHandler}
+        />
       </ConditionalView>
     </div>
   );
-};
-
-const PeopleEmpty = () => {
-  return (
-    <div>
-      <em>No people were found</em>
-    </div>
-  );
-};
-
-const PeopleView = ({ people }) => {
-  const [pageSize, setPageSize] = useState(10);
-  const [pageIndex, setPageIndex] = useState(1);
-
-  const pageSizeChangedHandler = newPageSize => {
-    setPageSize(newPageSize);
-    setPageIndex(1);
-  };
-
-  const pageIndexChangedHandler = pageIndex => {
-    setPageIndex(pageIndex);
-  };
-
-  return (
-    <div>
-      <PagingHeader
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        totalCount={people.length}
-        onPageSizeChanged={pageSizeChangedHandler}
-      />
-      {people.map(person => (
-        <PersonView key={person.id} {...person} />
-      ))}
-      <PagingFooter
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        totalCount={people.length}
-        onPageIndexChanged={pageIndexChangedHandler}
-      />
-    </div>
-  );
-};
-
-const PersonView = props => {
-  return <div className="person-container">{props.name}</div>;
 };
 
 export default App;
