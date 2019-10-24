@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import PageLinkPrevious from "./PageLinkPrevious";
+import PageLinkNext from "./PageLinkNext";
 
 const PagingFooter = ({
   pageIndex,
@@ -7,21 +9,36 @@ const PagingFooter = ({
   totalCount,
   onPageIndexChanged
 }) => {
-  const handleChange = event => {
-    onPageIndexChanged(parseInt(event.target.value));
+  const handleNavigatToPage = targetPageIndex => {
+    onPageIndexChanged(targetPageIndex);
   };
 
   const pageCount =
     Math.trunc(totalCount / pageSize) + (totalCount % pageSize ? 1 : 0);
 
+  // let pages = [];
+  // for (var i = 1; i <= pageCount; i++) {
+  //   pages.push(i);
+  // }
+
   return (
     <div>
-      <span>Page index ({pageCount} pages): </span>
-      <select value={pageIndex} onChange={handleChange}>
+      <div>({pageCount} pages)</div>
+      <PageLinkPrevious
+        currentPageIndex={pageIndex}
+        onNavigate={handleNavigatToPage}
+      />
+      <PageLinkNext
+        currentPageIndex={pageIndex}
+        totalPageCount={pageCount}
+        onNavigate={handleNavigatToPage}
+      />
+      {/* {pages.map(i => <PageLink pageIndex={i} currentPage={pageIndex} />)} */}
+      {/* <select value={pageIndex} onChange={handleChange}>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
-      </select>
+      </select> */}
     </div>
   );
 };
