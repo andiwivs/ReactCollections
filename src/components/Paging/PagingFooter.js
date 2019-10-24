@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import PageLinkPrevious from "./PageLinkPrevious";
 import PageLinkNext from "./PageLinkNext";
+import PageLinkCurrent from "./PageLinkCurrent";
+import PageLink from "./PageLink";
 
 const PagingFooter = ({
   pageIndex,
@@ -9,36 +11,39 @@ const PagingFooter = ({
   totalCount,
   onPageIndexChanged
 }) => {
-  const handleNavigatToPage = targetPageIndex => {
-    onPageIndexChanged(targetPageIndex);
+  const range = (start, end) => {
+    if (end < start) return [];
+    return [...Array(1 + end - start)].map((_, i) => start + i);
   };
 
   const pageCount =
     Math.trunc(totalCount / pageSize) + (totalCount % pageSize ? 1 : 0);
 
-  // let pages = [];
-  // for (var i = 1; i <= pageCount; i++) {
-  //   pages.push(i);
-  // }
+  const preCurrentPages = range(1, pageIndex - 1);
+  const postCurrentPages = range(pageIndex + 1, pageCount);
+
+  const handleNavigatToPage = targetPageIndex => {
+    onPageIndexChanged(targetPageIndex);
+  };
 
   return (
     <div>
-      <div>({pageCount} pages)</div>
       <PageLinkPrevious
         currentPageIndex={pageIndex}
         onNavigate={handleNavigatToPage}
       />
+      {preCurrentPages.map(i => (
+        <PageLink key={i} pageIndex={i} onNavigate={handleNavigatToPage} />
+      ))}
+      <PageLinkCurrent currentPageIndex={pageIndex} />
+      {postCurrentPages.map(i => (
+        <PageLink key={i} pageIndex={i} onNavigate={handleNavigatToPage} />
+      ))}
       <PageLinkNext
         currentPageIndex={pageIndex}
         totalPageCount={pageCount}
         onNavigate={handleNavigatToPage}
       />
-      {/* {pages.map(i => <PageLink pageIndex={i} currentPage={pageIndex} />)} */}
-      {/* <select value={pageIndex} onChange={handleChange}>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select> */}
     </div>
   );
 };

@@ -3,12 +3,16 @@ import PropTypes from "prop-types";
 
 const PageLinkNext = ({ currentPageIndex, totalPageCount, onNavigate }) => {
   const disabled = currentPageIndex === totalPageCount;
-  const handleClick = event => {
+  const dynamicProps = {};
+
+  if (disabled) dynamicProps.disabled = true;
+
+  const handleClick = () => {
     if (!disabled) onNavigate(currentPageIndex + 1);
   };
 
   return (
-    <button disabled={disabled} onClick={handleClick}>
+    <button {...dynamicProps} onClick={handleClick}>
       Next
     </button>
   );
