@@ -48,7 +48,7 @@ const PagingFooter = ({
       ...preCurrent.slice(preCurrent.length - buffer)
     ];
 
-    if (buffer === 0) {
+    if (buffer <= 0) {
       preCurrent.push(pageDtos[pageIndex - 2]);
     }
   }
@@ -58,12 +58,12 @@ const PagingFooter = ({
     let buffer = maxBuffer - pageIndex;
 
     postCurrent = [
-      ...postCurrent.slice(0, buffer),
+      ...(buffer > 0 ? [...postCurrent.slice(0, buffer)] : []),
       createPageElipsesDto(postCurrent.length),
       postCurrent[postCurrent.length - 1]
     ];
 
-    if (buffer === 0) {
+    if (buffer <= 0) {
       postCurrent.splice(0, 0, pageDtos[pageIndex]);
     }
   }
